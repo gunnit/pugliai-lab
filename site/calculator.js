@@ -32,3 +32,21 @@ form.addEventListener('input', refresh);
 form.addEventListener('submit', event => event.preventDefault());
 document.getElementById('print').addEventListener('click', () => window.print());
 refresh();
+
+/* Only the dedicated LinkedIn post passes this marker. The destination site
+   applies its own consent settings when the reader follows a link. */
+const sources = new URLSearchParams(window.location.search).getAll('via');
+if (window.location.protocol !== 'file:' && sources.length === 1 && sources[0] === 'linkedin-confronto') {
+  const links = [
+    ['supplier-guide', 'li_calcolatore_guida'],
+    ['process-assessment', 'li_calcolatore_processo'],
+  ];
+  for (const [id, asset] of links) {
+    const link = document.getElementById(id);
+    const target = new URL(link.href);
+    target.searchParams.set('utm_source', 'linkedin');
+    target.searchParams.set('utm_medium', 'organic_social');
+    target.searchParams.set('utm_content', asset);
+    link.href = target.toString();
+  }
+}
